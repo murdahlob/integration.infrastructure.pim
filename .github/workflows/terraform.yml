@@ -1,0 +1,50 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  workflow_dispatch:
+    inputs:
+      dispatch_id:
+        description: 'A unique ID provided when dispatching this workflow'
+        required: false
+        type: string
+      environment_name: 
+        description: 'Name of the environment'
+        required: true
+        type: string  
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:  
+  dispatch-id:
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.dispatch_id != ''
+    runs-on: [ ubuntu-latest ]
+    steps:
+      - id: dispatch-id
+        name: ${{ github.event.inputs.dispatch_id }}
+        run: echo "The dispatch ID is ${{ github.event.inputs.dispatch_id }}"
+
+  # This workflow contains a single job called "build"
+  build:
+    runs-on: ubuntu-latest
+    environment: 
+      name: ${{ github.event.inputs.environment_name }}
+
+    steps:
+      - name: Show the value of DEMO variable  
+        run: |
+          echo "${{ vars.DEMO }}"
+          
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      # Runs a single command using the runners shell
+      - name: Run a one-line script
+        run: echo Hello, world!
+
+      # Runs a set of commands using the runners shell
+      - name: Run a multi-line script
+        run: |
+          echo Add other actions to build,
+          echo test, and deploy your project.
